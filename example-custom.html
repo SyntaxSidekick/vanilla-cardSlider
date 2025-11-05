@@ -23,63 +23,67 @@
       <div id="slide-carousel" aria-label="Product showcase carousel">
         <!-- Slides will be dynamically generated here -->
       </div>
+    </main>
 
-      <!-- Primary text info (left side) -->
-      <aside id="slide-info-primary" class="slide-info primary-info" aria-live="polite">
-        <div class="genre-text">Loading...</div>
-        <div class="title-top">SLIDE</div>
-        <div class="title-bottom">CAROUSEL</div>
-        <div class="synopsis">Preparing your content showcase...</div>
-      </aside>
+    <aside class="slide-info" id="slide-info-primary">
+      <div class="genre-box">
+        <div class="genre-text" id="current-genre-primary"></div>
+      </div>
+      <div class="title-box-top">
+        <div class="title-top" id="current-title-top-primary"></div>
+      </div>
+      <div class="title-box-bottom">
+        <div class="title-bottom" id="current-title-bottom-primary"></div>
+      </div>
+      <div class="synopsis" id="current-synopsis-primary"></div>
+    </aside>
 
-      <!-- Secondary text info (right side) -->
-      <aside id="slide-info-secondary" class="slide-info secondary-info" aria-live="polite">
-        <div class="genre-text">Loading...</div>
-        <div class="title-top">SLIDE</div>
-        <div class="title-bottom">CAROUSEL</div>
-        <div class="synopsis">Preparing your content showcase...</div>
-      </aside>
+    <aside class="slide-info" id="slide-info-secondary">
+      <div class="genre-box">
+        <div class="genre-text" id="current-genre-secondary"></div>
+      </div>
+      <div class="title-box-top">
+        <div class="title-top" id="current-title-top-secondary"></div>
+      </div>
+      <div class="title-box-bottom">
+        <div class="title-bottom" id="current-title-bottom-secondary"></div>
+      </div>
+      <div class="synopsis" id="current-synopsis-secondary"></div>
+    </aside>
 
-      <!-- Material Design Controls -->
-      <div class="material-controls">
-        <!-- Auto-play toggle -->
-        <button id="auto-play-toggle" 
-                class="material-fab" 
-                aria-label="Pause carousel"
-                title="Toggle auto-play">
-          <span class="material-icons play-icon" style="display: none;">play_arrow</span>
-          <span class="material-icons pause-icon">pause</span>
+    <!-- Material Design Controls -->
+    <div class="material-controls" id="slide-controls" role="navigation" aria-label="Slide navigation">
+      <!-- Inline Controls -->
+      <div class="material-inline-controls">
+        <button class="material-fab" data-action="prev" aria-label="Previous slide">
+          <span class="material-icon">chevron_left</span>
+          <div class="material-ripple"></div>
         </button>
-
-        <!-- Navigation buttons -->
-        <button id="prev-slide" 
-                class="material-fab nav-button" 
-                aria-label="Previous slide"
-                title="Previous slide">
-          <span class="material-icons">chevron_left</span>
-        </button>
-
-        <button id="next-slide" 
-                class="material-fab nav-button" 
-                aria-label="Next slide"
-                title="Next slide">
-          <span class="material-icons">chevron_right</span>
-        </button>
-
-        <!-- Slide counter and info in controls -->
+        
         <div class="slide-info">
           <div class="slide-counter">
-            <span id="slide-number">1</span>
+            <span class="current-slide">1</span>
             <span class="slide-separator">/</span>
-            <span id="total-slides">1</span>
+            <span class="total-slides">4</span>
           </div>
           
-          <div class="slide-progress">
+          <!-- Progress Bar under counter -->
+          <div class="material-progress">
             <div class="progress-track">
-              <div id="progress-fill" class="progress-fill"></div>
+              <div class="progress-fill" id="carousel-progress-bar"></div>
             </div>
           </div>
         </div>
+        
+        <button class="material-fab" data-action="play-pause" aria-label="Play/Pause">
+          <span class="material-icon">pause</span>
+          <div class="material-ripple"></div>
+        </button>
+        
+        <button class="material-fab" data-action="next" aria-label="Next slide">
+          <span class="material-icon">chevron_right</span>
+          <div class="material-ripple"></div>
+        </button>
       </div>
     </div>
 
@@ -87,9 +91,6 @@
       <div class="spinner"></div>
       <p>Loading content...</p>
     </div>
-
-    <!-- Screen reader announcements -->
-    <div id="accessibility-announcements" class="visually-hidden" aria-live="polite"></div>
 
     <!-- Configuration (customize this section) -->
     <script>

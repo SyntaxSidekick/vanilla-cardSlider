@@ -11,15 +11,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vanilla CardSlider - Content Showcase</title>
   <!-- Material Icons -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet";
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet";>
   <!-- Roboto Font -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="progress-indicator" role="progressbar" aria-label="Slide transition indicator"></div>
-
-    
 
     <main role="main">
       <div id="slide-carousel" aria-label="Content showcase carousel">
@@ -29,66 +27,28 @@
 
     <aside class="slide-info" id="slide-info-primary">
       <div class="genre-box">
-        <div class="genre-text" id="current-genre-primary">Front-End Development</div>
+        <div class="genre-text" id="current-genre-primary"></div>
       </div>
       <div class="title-box-top">
-        <div class="title-top" id="current-title-top-primary">REACT</div>
+        <div class="title-top" id="current-title-top-primary"></div>
       </div>
       <div class="title-box-bottom">
-        <div class="title-bottom" id="current-title-bottom-primary">ECOSYSTEM</div>
+        <div class="title-bottom" id="current-title-bottom-primary"></div>
       </div>
-      <div class="synopsis" id="current-synopsis-primary">
-        React has revolutionized front-end development with its component-based architecture and virtual DOM. The ecosystem includes Next.js for full-stack applications, React Native for mobile development, and powerful state management solutions like Redux and Zustand.
-      </div>
-      <div class="action-buttons">
-        <button class="favorite-btn" aria-label="Add to favorites">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M6.32 2.577a49.255 49.255 0 0111.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 01-1.085.67L12 18.089l-7.165 3.583A.75.75 0 013.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
-        <button class="watch-btn">View Content</button>
-      </div>
+      <div class="synopsis" id="current-synopsis-primary"></div>
     </aside>
 
     <aside class="slide-info" id="slide-info-secondary">
       <div class="genre-box">
-        <div class="genre-text" id="current-genre-secondary">Front-End Development</div>
+        <div class="genre-text" id="current-genre-secondary"></div>
       </div>
       <div class="title-box-top">
-        <div class="title-top" id="current-title-top-secondary">REACT</div>
+        <div class="title-top" id="current-title-top-secondary"></div>
       </div>
       <div class="title-box-bottom">
-        <div class="title-bottom" id="current-title-bottom-secondary">ECOSYSTEM</div>
+        <div class="title-bottom" id="current-title-bottom-secondary"></div>
       </div>
-      <div class="synopsis" id="current-synopsis-secondary">
-        React has revolutionized front-end development with its component-based architecture and virtual DOM. The ecosystem includes Next.js for full-stack applications, React Native for mobile development, and powerful state management solutions like Redux and Zustand.
-      </div>
-      <div class="action-buttons">
-        <button class="favorite-btn" aria-label="Add to favorites">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M6.32 2.577a49.255 49.255 0 0111.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 01-1.085.67L12 18.089l-7.165 3.583A.75.75 0 013.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
-        <button class="watch-btn">View Content</button>
-      </div>
+      <div class="synopsis" id="current-synopsis-secondary"></div>
     </aside>
 
     <!-- Material Design Controls -->
@@ -131,9 +91,6 @@
       <div class="spinner"></div>
       <p>Loading content...</p>
     </div>
-
-    <!-- Screen reader announcements -->
-    <div id="accessibility-announcements" class="visually-hidden" aria-live="polite"></div>
 
     <!-- Configuration must be loaded first -->
     <script src="config.js"></script>

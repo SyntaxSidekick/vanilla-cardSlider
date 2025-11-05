@@ -42,7 +42,7 @@ class SlideCarousel {
         const elements = {};
         const ids = [
             'slide-carousel', 'slide-info-primary', 'slide-info-secondary',
-            'carousel-progress-bar', 'loading-screen'
+            'loading-screen'
         ];
         
         ids.forEach(id => {
@@ -93,11 +93,6 @@ class SlideCarousel {
         return layout;
     }
     
-    createSequenceArray() {
-        console.log(`🔧 Creating sequence array for ${this.totalSlides} slides`);
-        return Array.from({length: this.totalSlides}, (_, i) => i);
-    }
-    
     init() {
         this.log('🚀 Initializing slide carousel...');
         
@@ -110,7 +105,7 @@ class SlideCarousel {
             }
             
             this.layoutCache = this.calculateLayout();
-            this.sequenceArray = this.createSequenceArray();
+            this.sequenceArray = Array.from({length: this.totalSlides}, (_, i) => i);
             
             this.createSlideElements();
             this.initializeSlideCounter();
@@ -246,7 +241,7 @@ class SlideCarousel {
         
         // Initialize the first slide display with proper layout after DOM is ready
         setTimeout(() => {
-            console.log('� Setting up initial slide layout');
+            console.log('🔧 Setting up initial slide layout');
             this.displaySlide(0);
         }, 500);
     }
@@ -463,11 +458,9 @@ class SlideCarousel {
     }
     
     handleThumbnailPoster(slide, slideIndex, thumbPos) {
-        console.log(`🔧 handleThumbnailPoster: slideIndex=${slideIndex}, thumbPos=${thumbPos}`);
         slide.classList.add('thumbnail');
         
         const finalX = this.layoutCache.thumbAreaX + thumbPos * (CAROUSEL_CONFIG.THUMB_WIDTH + CAROUSEL_CONFIG.THUMB_SPACING);
-        console.log(`🔧 finalX calculation: thumbAreaX=${this.layoutCache.thumbAreaX}, thumbPos=${thumbPos}, finalX=${finalX}`);
         const wasActive = slide.classList.contains('active');
         const hasPosition = this.hasExistingPosition(slide);
         
@@ -502,7 +495,6 @@ class SlideCarousel {
     }
     
     slideInThumbnail(slide, finalX, delay, zIndex) {
-        console.log(`🔧 slideInThumbnail: finalX=${finalX}, delay=${delay}, zIndex=${zIndex}`);
         const backgroundImage = slide.style.backgroundImage;
         slide.style.position = 'absolute';
         slide.style.left = '0';
@@ -574,14 +566,6 @@ class SlideCarousel {
             }, 100);
         }
         
-        // Fallback to original progress bar
-        if (this.elements.carouselProgressBar) {
-            setTimeout(() => {
-                this.elements.carouselProgressBar.style.transition = 'width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                this.elements.carouselProgressBar.style.width = `${progress}%`;
-            }, 100);
-        }
-        
         // Update slide counter with a subtle animation
         if (this.elements.currentSlide) {
             this.elements.currentSlide.style.transform = 'scale(1.1)';
@@ -648,21 +632,6 @@ class SlideCarousel {
         this.resetProgressIndicator();
     }
     
-    animateProgressIndicator() {
-        const indicator = this.elements.progressIndicator;
-        
-        if (indicator) {
-            // Get current progress percentage (discrete step)
-            const currentProgress = ((this.activeIndex + 1) / this.totalSlides) * 100;
-            
-            // Set current position immediately (discrete step)
-            indicator.style.width = `${currentProgress}%`;
-            indicator.style.transition = 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-        }
-        
-        console.log(`📊 Controls progress bar set to: ${Math.round(((this.activeIndex + 1) / this.totalSlides) * 100)}%`);
-    }
-    
     animateBottomProgressIndicator() {
         const bottomIndicator = this.elements.bottomProgressIndicator;
         if (!bottomIndicator) return;
@@ -725,25 +694,6 @@ class SlideCarousel {
                     playPauseBtn.setAttribute('aria-label', 'Play carousel');
                     this.stopAutoPlayTimer();
                 }
-            }
-        }
-        
-        // Fallback for original auto-play toggle
-        const autoPlayToggle = this.elements.autoPlayToggle;
-        if (autoPlayToggle) {
-            const pauseIcon = autoPlayToggle.querySelector('.pause-icon');
-            const playIcon = autoPlayToggle.querySelector('.play-icon');
-            
-            if (this.isAutoActive) {
-                if (pauseIcon) pauseIcon.style.display = 'block';
-                if (playIcon) playIcon.style.display = 'none';
-                autoPlayToggle.setAttribute('aria-label', 'Pause carousel');
-                this.startAutoPlayTimer();
-            } else {
-                if (pauseIcon) pauseIcon.style.display = 'none';
-                if (playIcon) playIcon.style.display = 'block';
-                autoPlayToggle.setAttribute('aria-label', 'Play carousel');
-                this.stopAutoPlayTimer();
             }
         }
     }
