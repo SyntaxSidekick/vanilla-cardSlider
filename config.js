@@ -144,22 +144,67 @@ window.APPEARANCE_CONFIG = {
 // =============================================================================
 
 window.RESPONSIVE_CONFIG = {
-    // Breakpoint definitions
+    // Modern breakpoint definitions
     MOBILE_MAX: 768,
     TABLET_MAX: 1024,
     DESKTOP_MIN: 1025,
+    LARGE_DESKTOP_MIN: 1400,
     
-    // Mobile adjustments
-    MOBILE_THUMB_WIDTH: 120,
-    MOBILE_THUMB_HEIGHT: 180,
-    MOBILE_MAX_THUMBS: 3,
-    MOBILE_TITLE_SIZE: '2.5rem',
+    // Mobile adjustments (≤768px)
+    MOBILE_THUMB_WIDTH: 100,
+    MOBILE_THUMB_HEIGHT: 150,
+    MOBILE_MAX_THUMBS: 2,
+    MOBILE_TITLE_SIZE: '2rem',
+    MOBILE_SPACING: 20,
     
-    // Tablet adjustments  
-    TABLET_THUMB_WIDTH: 160,
-    TABLET_THUMB_HEIGHT: 240,
+    // Tablet adjustments (769px - 1024px)
+    TABLET_THUMB_WIDTH: 140,
+    TABLET_THUMB_HEIGHT: 210,
     TABLET_MAX_THUMBS: 3,
-    TABLET_TITLE_SIZE: '3rem'
+    TABLET_TITLE_SIZE: '3rem',
+    TABLET_SPACING: 30,
+    
+    // Desktop adjustments (≥1025px)
+    DESKTOP_THUMB_WIDTH: 200,
+    DESKTOP_THUMB_HEIGHT: 300,
+    DESKTOP_MAX_THUMBS: 4,
+    DESKTOP_TITLE_SIZE: '4rem',
+    DESKTOP_SPACING: 40,
+    
+    // Large desktop adjustments (≥1400px)
+    LARGE_DESKTOP_MAX_THUMBS: 5,
+    LARGE_DESKTOP_TITLE_SIZE: '5rem',
+    
+    // Dynamic spacing calculations
+    getResponsiveSpacing: function(screenWidth) {
+        if (screenWidth <= this.MOBILE_MAX) return this.MOBILE_SPACING;
+        if (screenWidth <= this.TABLET_MAX) return this.TABLET_SPACING;
+        return this.DESKTOP_SPACING;
+    },
+    
+    // Viewport-based positioning
+    getViewportPositioning: function(screenWidth, screenHeight) {
+        const isMobile = screenWidth <= this.MOBILE_MAX;
+        const isTablet = screenWidth > this.MOBILE_MAX && screenWidth <= this.TABLET_MAX;
+        
+        return {
+            thumbAreaRight: isMobile ? Math.min(screenWidth * 0.05, 30) : 
+                           isTablet ? Math.min(screenWidth * 0.1, 150) :
+                           Math.min(screenWidth * 0.2, 400),
+            
+            thumbAreaBottom: isMobile ? Math.min(screenHeight * 0.2, 150) :
+                            isTablet ? Math.min(screenHeight * 0.25, 250) :
+                            Math.min(screenHeight * 0.3, 350),
+            
+            slideInfoLeft: isMobile ? Math.min(screenWidth * 0.05, 20) :
+                          isTablet ? Math.min(screenWidth * 0.08, 40) :
+                          60,
+            
+            slideInfoTop: isMobile ? Math.min(screenHeight * 0.15, 120) :
+                         isTablet ? Math.min(screenHeight * 0.2, 180) :
+                         240
+        };
+    }
 };
 
 // =============================================================================

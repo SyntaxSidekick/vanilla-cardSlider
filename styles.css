@@ -37,6 +37,16 @@
   box-sizing: border-box;
 }
 
+html {
+  /* Prevent iOS zoom on form focus */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   background-color: var(--background-dark);
@@ -45,6 +55,40 @@ body {
   overflow: hidden;
   font-family: "Inter", sans-serif;
   height: 100vh;
+  container-type: size;
+  
+  /* Mobile device optimizations */
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+  /* Prevent pull-to-refresh */
+  overscroll-behavior: none;
+  
+  /* iOS safe area support */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Modern viewport units for better mobile support */
+@supports (height: 100dvh) {
+  body {
+    height: 100dvh;
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-appearance: none) {
+  body {
+    /* Fix iOS viewport height issues */
+    min-height: -webkit-fill-available;
+  }
 }
 
 /* ================================
@@ -170,8 +214,8 @@ body {
 /* Main Poster Content */
 .poster-content {
   position: absolute;
-  bottom: 100px;
-  left: 16px;
+  bottom: 150px;
+  left: 0px;
   color: var(--text-color);
   z-index: 40;
   opacity: 0;
@@ -211,8 +255,8 @@ body {
 .slide-poster.thumbnail {
   .poster-content {
     position: absolute !important;
-    bottom: 10px !important;
-    left: 16px !important;
+    bottom: 40px !important;
+    left: 0px !important;
     color: var(--text-color) !important;
     z-index: 1002 !important;
     opacity: 1 !important;
@@ -572,6 +616,12 @@ aside.slide-info * {
     transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   outline: none;
+  
+  /* Mobile touch optimizations */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 44px; /* iOS minimum touch target */
+  min-width: 44px;
 
   &:hover {
     box-shadow: 
@@ -598,6 +648,7 @@ aside.slide-info * {
   .material-icon,
   .material-icons {
     font-size: 28px;
+    pointer-events: none; /* Prevent event conflicts */
   }
 }
 
@@ -649,130 +700,246 @@ aside.slide-info * {
    RESPONSIVE DESIGN
    ================================ */
 
-/* Tablet & Mobile Styles */
-@media (max-width: 768px) {
-  /* Slide Info Adjustments */
-  .slide-info {
-    left: 20px;
-    top: 200px;
+/* Fluid Typography */
+:root {
+  --fluid-title-size: clamp(2rem, 8vw, 4.5rem);
+  --fluid-genre-size: clamp(0.875rem, 2vw, 1.25rem);
+  --fluid-synopsis-size: clamp(0.875rem, 1.5vw, 1rem);
+  --fluid-spacing: clamp(1rem, 4vw, 3rem);
+}
+
+/* Base responsive adjustments */
+.slide-info {
+  .title-top,
+  .title-bottom {
+    font-size: var(--fluid-title-size);
   }
   
-  .slide-info .synopsis {
-    width: calc(100vw - 40px);
-    max-width: 400px;
+  .genre-box .genre-text {
+    font-size: var(--fluid-genre-size);
   }
   
-  .slide-info .title-top,
-  .slide-info .title-bottom {
-    font-size: 48px;
-  }
-  
-  /* Thumbnail Adjustments */
-  .slide-poster.thumbnail {
-    width: 100px;
-    height: 150px;
-  }
-  
-  /* Material Controls - Mobile Layout */
-  .material-controls {
-    bottom: 20px;
-    right: 50%;
-    transform: translateX(50%);
-  }
-  
-  .material-inline-controls {
-    gap: 12px;
-    padding: 12px 20px;
-    border-radius: 24px;
-  }
-  
-  .slide-poster.thumbnail {
-    width: 120px;
-    height: 180px;
-  }
-  
-  .material-controls .slide-info {
-    min-width: 70px;
-    gap: 6px;
-  }
-  
-  .slide-counter {
-    font-size: 14px;
-  }
-  
-  .current-slide {
-    font-size: 16px;
-  }
-  
-  .material-controls .slide-info .material-progress,
-  .material-controls .slide-info .slide-progress {
-    width: 50px;
-    height: 3px;
-  }
-  
-  .material-fab {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .material-fab .material-icon,
-  .material-fab .material-icons {
-    font-size: 24px;
+  .synopsis {
+    font-size: var(--fluid-synopsis-size);
+    width: min(500px, calc(100vw - 2rem));
   }
 }
 
-/* Mobile Styles */
-@media (max-width: 480px) {
-  /* Further Title Size Reduction */
-  .slide-info .title-top,
-  .slide-info .title-bottom {
-    font-size: 36px;
+/* Container Query Support */
+@container (max-width: 768px) {
+  .slide-info {
+    left: clamp(1rem, 3vw, 3rem);
+    top: clamp(10rem, 25vh, 15rem);
+  }
+}
+
+/* Enhanced Mobile Styles */
+@media (max-width: 768px) {
+  /* Mobile viewport adjustments */
+  body {
+    height: 100vh;
+    height: 100dvh; /* Modern browsers */
+    min-height: -webkit-fill-available; /* iOS */
   }
   
-  /* Ultra-Mobile Controls */
+  /* Slide Info Mobile Adjustments */
+  .slide-info {
+    left: clamp(1rem, 5vw, 2rem);
+    top: clamp(6rem, 15vh, 10rem); /* Reduced for mobile screens */
+    
+    .synopsis {
+      width: calc(100vw - 4rem);
+      max-width: min(350px, 85vw); /* Smaller max width for mobile */
+      font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+      line-height: 1.5;
+      margin-top: clamp(0.5rem, 2vw, 1rem);
+    }
+    
+    .title-top,
+    .title-bottom {
+      font-size: clamp(1.8rem, 10vw, 2.8rem); /* More aggressive scaling */
+      line-height: 0.85;
+      margin-bottom: clamp(0.25rem, 1vw, 0.5rem);
+    }
+    
+    .genre-box {
+      height: clamp(2rem, 8vw, 3rem);
+      margin-bottom: clamp(0.5rem, 2vw, 1rem);
+      
+      .genre-text {
+        font-size: clamp(0.9rem, 4vw, 1.1rem);
+        padding-top: clamp(0.5rem, 2vw, 1rem);
+      }
+    }
+    
+    .title-box-top,
+    .title-box-bottom {
+      height: clamp(3rem, 12vw, 5rem);
+    }
+  }
+  
+  /* Responsive Material Controls */
   .material-controls {
-    bottom: 16px;
+    bottom: clamp(1rem, 5vh, 2rem);
     right: 50%;
     transform: translateX(50%);
+    opacity: 1; /* Ensure visibility on mobile */
+    
+    .material-inline-controls {
+      gap: clamp(0.5rem, 2vw, 0.8rem);
+      padding: clamp(0.6rem, 2.5vw, 0.8rem) clamp(0.8rem, 3vw, 1.2rem);
+      border-radius: clamp(1rem, 4vw, 1.5rem);
+      backdrop-filter: blur(15px);
+      background: rgba(0, 0, 0, 0.85); /* Slightly more opaque on mobile */
+    }
+    
+    .slide-info {
+      min-width: clamp(2.5rem, 12vw, 4rem);
+      gap: clamp(0.2rem, 1vw, 0.4rem);
+      
+      .material-progress,
+      .slide-progress {
+        width: clamp(2rem, 10vw, 2.5rem);
+        height: clamp(2px, 0.8vw, 3px);
+        border-radius: 2px;
+      }
+      
+      .progress-fill {
+        border-radius: 2px;
+      }
+    }
   }
   
-  .material-inline-controls {
-    gap: 10px;
-    padding: 10px 16px;
-    border-radius: 20px;
+  /* Responsive FAB Buttons */
+  .material-fab {
+    width: clamp(2.5rem, 12vw, 3rem);
+    height: clamp(2.5rem, 12vw, 3rem);
+    min-width: 44px; /* iOS minimum */
+    min-height: 44px;
+    
+    .material-icon,
+    .material-icons {
+      font-size: clamp(1.2rem, 6vw, 1.4rem);
+    }
   }
   
-  .slide-poster.thumbnail {
-    width: 100px;
-    height: 150px;
-  }
-  
-  .material-controls .slide-info {
-    min-width: 60px;
-    gap: 5px;
-  }
-  
+  /* Slide Counter Responsive */
   .slide-counter {
-    font-size: 12px;
+    font-size: clamp(0.7rem, 3vw, 0.8rem);
+    font-weight: 500;
   }
   
   .current-slide {
-    font-size: 14px;
+    font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+    font-weight: 600;
   }
   
-  .material-controls .slide-info .material-progress,
-  .material-controls .slide-info .slide-progress {
-    width: 40px;
-    height: 2px;
+  .slide-separator,
+  .total-slides {
+    font-size: clamp(0.7rem, 3vw, 0.8rem);
+  }
+  
+  /* Thumbnail adjustments for mobile */
+  .slide-poster.thumbnail {
+    border-radius: clamp(0.5rem, 2vw, 0.8rem);
+    
+    .poster-content {
+      bottom: clamp(0.3rem, 1.5vw, 0.6rem) !important;
+      left: clamp(0.5rem, 2vw, 1rem) !important;
+      
+      .content-genre {
+        font-size: clamp(0.6rem, 2.5vw, 0.8rem);
+        margin-bottom: clamp(0.1rem, 0.5vw, 0.3rem);
+      }
+      
+      .content-title {
+        font-size: clamp(0.7rem, 3vw, 0.9rem);
+        line-height: 1.1;
+      }
+      
+      .content-start {
+        width: clamp(1rem, 4vw, 1.5rem);
+        height: clamp(2px, 1vw, 3px);
+        margin-bottom: clamp(0.2rem, 1vw, 0.4rem);
+      }
+    }
+  }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .slide-info {
+    left: clamp(2rem, 5vw, 4rem);
+    top: clamp(12rem, 25vh, 15rem);
+    
+    .title-top,
+    .title-bottom {
+      font-size: clamp(3rem, 8vw, 4rem);
+    }
+    
+    .synopsis {
+      width: min(450px, calc(100vw - 4rem));
+      font-size: clamp(0.875rem, 1.8vw, 1rem);
+    }
+  }
+  
+  .material-controls {
+    bottom: clamp(2rem, 6vh, 3rem);
+    
+    .material-fab {
+      width: clamp(3rem, 6vw, 3.5rem);
+      height: clamp(3rem, 6vw, 3.5rem);
+    }
+  }
+}
+
+/* Large Screen Optimizations */
+@media (min-width: 1400px) {
+  .slide-info {
+    .title-top,
+    .title-bottom {
+      font-size: clamp(4rem, 6vw, 5rem);
+    }
+    
+    .synopsis {
+      width: min(600px, 40vw);
+      font-size: clamp(1rem, 1.2vw, 1.125rem);
+    }
+  }
+}
+
+/* Orientation-specific adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .slide-info {
+    top: clamp(1rem, 8vh, 3rem);
+    
+    .title-top,
+    .title-bottom {
+      font-size: clamp(1.5rem, 8vh, 2.5rem);
+    }
+    
+    .synopsis {
+      font-size: clamp(0.75rem, 2.5vh, 0.875rem);
+      line-height: 1.4;
+    }
+  }
+  
+  .material-controls {
+    bottom: clamp(0.5rem, 2vh, 1rem);
+  }
+}
+
+/* High DPI / Retina Display Optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .slide-poster {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
   }
   
   .material-fab {
-    width: 44px;
-    height: 44px;
-  }
-  
-  .material-fab .material-icon,
-  .material-fab .material-icons {
-    font-size: 22px;
+    box-shadow: 
+      0px 6px 10px -2px rgba(0,0,0,0.2),
+      0px 12px 20px 0px rgba(0,0,0,0.14),
+      0px 2px 36px 0px rgba(0,0,0,0.12);
   }
 }

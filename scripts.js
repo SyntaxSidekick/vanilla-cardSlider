@@ -82,14 +82,49 @@ class SlideCarousel {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
         
+        // Get responsive configuration
+        const RESPONSIVE_CONFIG = window.RESPONSIVE_CONFIG || {};
+        
+        // Determine current breakpoint
+        const isMobile = vw <= (RESPONSIVE_CONFIG.MOBILE_MAX || 768);
+        const isTablet = vw > (RESPONSIVE_CONFIG.MOBILE_MAX || 768) && vw <= (RESPONSIVE_CONFIG.TABLET_MAX || 1024);
+        
+        // Use responsive values
+        const thumbWidth = isMobile ? (RESPONSIVE_CONFIG.MOBILE_THUMB_WIDTH || 120) :
+                          isTablet ? (RESPONSIVE_CONFIG.TABLET_THUMB_WIDTH || 160) :
+                          CAROUSEL_CONFIG.THUMB_WIDTH;
+        
+        const thumbHeight = isMobile ? (RESPONSIVE_CONFIG.MOBILE_THUMB_HEIGHT || 180) :
+                           isTablet ? (RESPONSIVE_CONFIG.TABLET_THUMB_HEIGHT || 240) :
+                           CAROUSEL_CONFIG.THUMB_HEIGHT;
+        
+        const maxThumbs = isMobile ? (RESPONSIVE_CONFIG.MOBILE_MAX_THUMBS || 2) :
+                         isTablet ? (RESPONSIVE_CONFIG.TABLET_MAX_THUMBS || 3) :
+                         CAROUSEL_CONFIG.MAX_VISIBLE_THUMBS;
+        
+        // Responsive positioning
+        const thumbAreaRight = isMobile ? Math.min(vw * 0.1, 50) : 
+                              isTablet ? Math.min(vw * 0.15, 200) :
+                              CAROUSEL_CONFIG.THUMB_AREA_RIGHT;
+        
+        const thumbAreaBottom = isMobile ? Math.min(vh * 0.25, 200) :
+                               isTablet ? Math.min(vh * 0.3, 300) :
+                               CAROUSEL_CONFIG.THUMB_AREA_BOTTOM;
+        
         const layout = {
-            thumbAreaX: Math.max(CAROUSEL_CONFIG.MIN_AREA_OFFSET, vw - CAROUSEL_CONFIG.THUMB_AREA_RIGHT),
-            thumbAreaY: Math.max(CAROUSEL_CONFIG.MIN_AREA_OFFSET, vh - CAROUSEL_CONFIG.THUMB_AREA_BOTTOM),
+            thumbAreaX: Math.max(CAROUSEL_CONFIG.MIN_AREA_OFFSET || 100, vw - thumbAreaRight),
+            thumbAreaY: Math.max(CAROUSEL_CONFIG.MIN_AREA_OFFSET || 100, vh - thumbAreaBottom),
             entryX: vw + 200,
-            textOffsetY: CAROUSEL_CONFIG.THUMB_HEIGHT - 100
+            textOffsetY: thumbHeight - 100,
+            thumbWidth,
+            thumbHeight,
+            maxThumbs,
+            isMobile,
+            isTablet,
+            breakpoint: isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop'
         };
         
-        console.log(`🔧 Layout calculated:`, layout);
+        console.log(`🔧 Layout calculated for ${layout.breakpoint}:`, layout);
         return layout;
     }
     
@@ -191,6 +226,9 @@ class SlideCarousel {
         
         document.addEventListener('keydown', this.handleKeyPress.bind(this));
         
+        // Add touch event handling for mobile devices
+        this.bindTouchEvents();
+        
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
@@ -199,6 +237,67 @@ class SlideCarousel {
                 this.refreshThumbnailPositions();
                 this.positionControlsUnderThumbs();
             }, 150);
+        });
+        
+        // Handle orientation change on mobile devices
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                this.layoutCache = this.calculateLayout();
+                this.refreshThumbnailPositions();
+                this.positionControlsUnderThumbs();
+            }, 300); // Delay to allow orientation change to complete
+        });
+    }
+    
+    bindTouchEvents() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+        let isTouch = false;
+        
+        const carousel = this.elements.slideCarousel;
+        if (!carousel) return;
+        
+        // Touch start
+        carousel.addEventListener('touchstart', (e) => {
+            isTouch = true;
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+        
+        // Touch end - handle swipe gestures
+        carousel.addEventListener('touchend', (e) => {
+            if (!isTouch) return;
+            
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            const minSwipeDistance = 50;
+            
+            // Only handle horizontal swipes (ignore vertical scrolling)
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+                e.preventDefault();
+                
+                if (deltaX > 0) {
+                    // Swipe right - previous slide
+                    this.previousSlide();
+                } else {
+                    // Swipe left - next slide
+                    this.nextSlide();
+                }
+            }
+            
+            isTouch = false;
+        }, { passive: false });
+        
+        // Prevent default touch behaviors on buttons
+        document.querySelectorAll('.material-fab').forEach(button => {
+            button.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
         });
     }
     
@@ -260,17 +359,25 @@ class SlideCarousel {
         const materialControls = this.elements.materialControls;
         if (!materialControls) return;
         
-        // Calculate the center of the thumbnail area
+        // Calculate the center of the thumbnail area using responsive values
         const vw = window.innerWidth;
-        const thumbAreaX = Math.max(CAROUSEL_CONFIG.MIN_AREA_OFFSET, vw - CAROUSEL_CONFIG.THUMB_AREA_RIGHT);
-        const thumbAreaWidth = CAROUSEL_CONFIG.MAX_VISIBLE_THUMBS * (CAROUSEL_CONFIG.THUMB_WIDTH + CAROUSEL_CONFIG.THUMB_SPACING);
-        const thumbAreaCenterX = thumbAreaX + (thumbAreaWidth / 2);
+        const thumbAreaWidth = this.layoutCache.maxThumbs * (this.layoutCache.thumbWidth + CAROUSEL_CONFIG.THUMB_SPACING);
+        const thumbAreaCenterX = this.layoutCache.thumbAreaX + (thumbAreaWidth / 2);
         
-        // Position controls centered under thumbnails
-        materialControls.style.right = `${vw - thumbAreaCenterX}px`;
-        materialControls.style.transform = 'translateX(50%)';
+        // Responsive positioning
+        if (this.layoutCache.isMobile) {
+            // On mobile, center controls at bottom
+            materialControls.style.right = '50%';
+            materialControls.style.transform = 'translateX(50%)';
+            materialControls.style.bottom = '20px';
+        } else {
+            // Position controls centered under thumbnails
+            materialControls.style.right = `${vw - thumbAreaCenterX}px`;
+            materialControls.style.transform = 'translateX(50%)';
+            materialControls.style.bottom = this.layoutCache.isTablet ? '40px' : '60px';
+        }
         
-        console.log(`🎯 Controls positioned at center of thumbnail area: ${Math.round(thumbAreaCenterX)}px from left`);
+        console.log(`🎯 Controls positioned for ${this.layoutCache.breakpoint}: center at ${Math.round(thumbAreaCenterX)}px`);
     }
     
     displaySlide(targetIndex) {
@@ -412,7 +519,7 @@ class SlideCarousel {
         const match = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
         const currentX = match ? parseFloat(match[1]) : 0;
         const currentY = match ? parseFloat(match[2]) : 0;
-        const currentWidth = parseFloat(slide.style.width) || CAROUSEL_CONFIG.THUMB_WIDTH;
+        const currentWidth = parseFloat(slide.style.width) || this.layoutCache.thumbWidth;
         
         const backgroundImage = slide.style.backgroundImage;
         
@@ -460,12 +567,19 @@ class SlideCarousel {
     handleThumbnailPoster(slide, slideIndex, thumbPos) {
         slide.classList.add('thumbnail');
         
-        const finalX = this.layoutCache.thumbAreaX + thumbPos * (CAROUSEL_CONFIG.THUMB_WIDTH + CAROUSEL_CONFIG.THUMB_SPACING);
+        // Use responsive layout values
+        const finalX = this.layoutCache.thumbAreaX + thumbPos * (this.layoutCache.thumbWidth + CAROUSEL_CONFIG.THUMB_SPACING);
         const wasActive = slide.classList.contains('active');
         const hasPosition = this.hasExistingPosition(slide);
         
         const staggerDelay = thumbPos * CAROUSEL_CONFIG.STAGGER_DELAY;
         const zIndex = 50 + thumbPos;
+        
+        // Check if we should show this thumbnail based on responsive max
+        if (thumbPos >= this.layoutCache.maxThumbs) {
+            this.hideElement(slide);
+            return;
+        }
         
         if (wasActive || hasPosition) {
             this.animateToThumbnail(slide, finalX, staggerDelay, zIndex);
@@ -487,8 +601,8 @@ class SlideCarousel {
         slide.style.transition = `transform ${CAROUSEL_CONFIG.ANIMATION_DURATION}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
         slide.style.transitionDelay = `${delay}s`;
         slide.style.transform = `translate(${finalX}px, ${this.layoutCache.thumbAreaY}px)`;
-        slide.style.width = `${CAROUSEL_CONFIG.THUMB_WIDTH}px`;
-        slide.style.height = `${CAROUSEL_CONFIG.THUMB_HEIGHT}px`;
+        slide.style.width = `${this.layoutCache.thumbWidth}px`;
+        slide.style.height = `${this.layoutCache.thumbHeight}px`;
         slide.style.zIndex = zIndex;
         slide.style.opacity = '1';
         slide.style.backgroundImage = backgroundImage;
@@ -499,8 +613,8 @@ class SlideCarousel {
         slide.style.position = 'absolute';
         slide.style.left = '0';
         slide.style.top = '0';
-        slide.style.width = `${CAROUSEL_CONFIG.THUMB_WIDTH}px`;
-        slide.style.height = `${CAROUSEL_CONFIG.THUMB_HEIGHT}px`;
+        slide.style.width = `${this.layoutCache.thumbWidth}px`;
+        slide.style.height = `${this.layoutCache.thumbHeight}px`;
         slide.style.transform = `translate(${this.layoutCache.entryX}px, ${this.layoutCache.thumbAreaY}px)`;
         slide.style.zIndex = zIndex;
         slide.style.opacity = '1';
@@ -581,12 +695,21 @@ class SlideCarousel {
     refreshThumbnailPositions() {
         const thumbnails = this.elements.slideCarousel.querySelectorAll('.slide-poster.thumbnail');
         thumbnails.forEach((thumb, index) => {
-            const finalX = this.layoutCache.thumbAreaX + index * (CAROUSEL_CONFIG.THUMB_WIDTH + CAROUSEL_CONFIG.THUMB_SPACING);
-            thumb.style.transform = `translate(${finalX}px, ${this.layoutCache.thumbAreaY}px)`;
-            
-            const content = thumb.querySelector('.poster-content');
-            if (content) {
-                content.style.transform = `translate(${finalX}px, ${this.layoutCache.thumbAreaY + this.layoutCache.textOffsetY}px)`;
+            // Only position thumbnails that should be visible
+            if (index < this.layoutCache.maxThumbs) {
+                const finalX = this.layoutCache.thumbAreaX + index * (this.layoutCache.thumbWidth + CAROUSEL_CONFIG.THUMB_SPACING);
+                thumb.style.transform = `translate(${finalX}px, ${this.layoutCache.thumbAreaY}px)`;
+                thumb.style.width = `${this.layoutCache.thumbWidth}px`;
+                thumb.style.height = `${this.layoutCache.thumbHeight}px`;
+                thumb.style.opacity = '1';
+                
+                const content = thumb.querySelector('.poster-content');
+                if (content) {
+                    content.style.transform = `translate(${finalX}px, ${this.layoutCache.thumbAreaY + this.layoutCache.textOffsetY}px)`;
+                }
+            } else {
+                // Hide excess thumbnails
+                this.hideElement(thumb);
             }
         });
     }
