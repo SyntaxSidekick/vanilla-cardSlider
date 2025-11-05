@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<!--
+  Vanilla CardSlider - Product Showcase Example
+  Created by: Riad Kilani (@SyntaxSidekick)
+  Portfolio: https://riadkilani.com
+  GitHub: https://github.com/SyntaxSidekick
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanilla CardSlider - Product Showcase</title>
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Roboto Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="progress-indicator" role="progressbar" aria-label="Slide transition indicator"></div>
+
+    <main role="main">
+      <div id="slide-carousel" aria-label="Product showcase carousel">
+        <!-- Slides will be dynamically generated here -->
+      </div>
+
+      <!-- Primary text info (left side) -->
+      <aside id="slide-info-primary" class="slide-info primary-info" aria-live="polite">
+        <div class="genre-text">Loading...</div>
+        <div class="title-top">SLIDE</div>
+        <div class="title-bottom">CAROUSEL</div>
+        <div class="synopsis">Preparing your content showcase...</div>
+      </aside>
+
+      <!-- Secondary text info (right side) -->
+      <aside id="slide-info-secondary" class="slide-info secondary-info" aria-live="polite">
+        <div class="genre-text">Loading...</div>
+        <div class="title-top">SLIDE</div>
+        <div class="title-bottom">CAROUSEL</div>
+        <div class="synopsis">Preparing your content showcase...</div>
+      </aside>
+
+      <!-- Material Design Controls -->
+      <div class="material-controls">
+        <!-- Auto-play toggle -->
+        <button id="auto-play-toggle" 
+                class="material-fab" 
+                aria-label="Pause carousel"
+                title="Toggle auto-play">
+          <span class="material-icons play-icon" style="display: none;">play_arrow</span>
+          <span class="material-icons pause-icon">pause</span>
+        </button>
+
+        <!-- Navigation buttons -->
+        <button id="prev-slide" 
+                class="material-fab nav-button" 
+                aria-label="Previous slide"
+                title="Previous slide">
+          <span class="material-icons">chevron_left</span>
+        </button>
+
+        <button id="next-slide" 
+                class="material-fab nav-button" 
+                aria-label="Next slide"
+                title="Next slide">
+          <span class="material-icons">chevron_right</span>
+        </button>
+
+        <!-- Slide counter and info in controls -->
+        <div class="slide-info">
+          <div class="slide-counter">
+            <span id="slide-number">1</span>
+            <span class="slide-separator">/</span>
+            <span id="total-slides">1</span>
+          </div>
+          
+          <div class="slide-progress">
+            <div class="progress-track">
+              <div id="progress-fill" class="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-screen" id="loading-screen">
+      <div class="spinner"></div>
+      <p>Loading content...</p>
+    </div>
+
+    <!-- Screen reader announcements -->
+    <div id="accessibility-announcements" class="visually-hidden" aria-live="polite"></div>
+
+    <!-- Configuration (customize this section) -->
+    <script>
+      // Custom product data
+      window.SLIDE_DATA = [
+        {
+          genre: 'Premium Laptop',
+          titleTop: 'MACBOOK',
+          titleBottom: 'PRO M3',
+          synopsis: 'Experience unprecedented performance with the new MacBook Pro featuring the M3 chip. Perfect for creative professionals, developers, and power users who demand the best in portable computing technology.',
+          poster: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&h=1200&fit=crop'
+        },
+        {
+          genre: 'Smart Watch',
+          titleTop: 'APPLE',
+          titleBottom: 'WATCH ULTRA',
+          synopsis: 'The most rugged and capable Apple Watch ever, designed for endurance athletes and outdoor adventurers. With precision GPS, cellular connectivity, and up to 36 hours of battery life.',
+          poster: 'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=800&h=1200&fit=crop'
+        },
+        {
+          genre: 'Wireless Earbuds',
+          titleTop: 'AIRPODS',
+          titleBottom: 'PRO 2',
+          synopsis: 'Next-generation AirPods Pro with breakthrough active noise cancellation, adaptive transparency, and personalized spatial audio for an immersive listening experience.',
+          poster: 'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=800&h=1200&fit=crop'
+        },
+        {
+          genre: 'Gaming Console',
+          titleTop: 'PLAYSTATION',
+          titleBottom: '5 PRO',
+          synopsis: 'The ultimate gaming experience with 8K graphics, lightning-fast loading, and immersive 3D audio. Play the latest exclusive titles with unprecedented visual fidelity.',
+          poster: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800&h=1200&fit=crop'
+        }
+      ];
+
+      // Custom configuration for product showcase
+      window.CAROUSEL_CONFIG = {
+        ...window.CAROUSEL_CONFIG,
+        AUTO_PLAY_INTERVAL: 7000,  // Slower for product viewing
+        ANIMATION_DURATION: 800,   // Smoother transitions
+        DEBUG_LOGGING: true        // Enable debug mode
+      };
+
+      // Custom color scheme
+      window.APPEARANCE_CONFIG = {
+        ...window.APPEARANCE_CONFIG,
+        PRIMARY_COLOR: '#4CAF50',      // Green for eco-friendly products
+        ACCENT_COLOR: '#FF9800',       // Orange accent
+        BACKGROUND_COLOR: '#fafafa'    // Light background
+      };
+    </script>
+    
+    <!-- Load the carousel system -->
+    <script src="config.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>
