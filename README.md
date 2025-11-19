@@ -2,6 +2,10 @@
 
 A highly customizable, responsive card carousel with Material Design controls. Perfect for showcasing movies, products, portfolios, or any visual content with pure vanilla JavaScript.
 
+<img width="1914" height="914" alt="vanilla-cardSlider" src="https://github.com/user-attachments/assets/4b5fb081-1692-4a2e-ad2f-100adb4cf1a3" />
+
+#Demo - https://syntaxsidekick.github.io/vanilla-cardSlider/
+
 ## 🚀 Quick Start
 
 1. **No installation required** - Pure HTML, CSS, JavaScript
